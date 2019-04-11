@@ -1,0 +1,92 @@
+
+$base: 40;
+@function rem($px) {
+  @return $px/40*1rem;
+}
+@mixin ellipsis () {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.wheel{
+  position: relative;
+  width: rem(656);
+  height: rem(656);
+  background: url('../image/turntable.png') no-repeat center ;
+  background-size:  100% 100%;
+  margin: rem(15) auto;
+  z-index: 5;
+}
+.rotate{
+  position: absolute;
+  top: rem(56);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: rem(524);
+  height: rem(524);
+  background: url('../image/innerTable.png') no-repeat center ;
+  background-size:  100% 100%;
+  border-radius: 50%;
+  transform: rotateZ(-0deg);
+  z-index: 2;
+  will-change: transform;
+}
+.spin-button{
+  height: rem(201);
+  width: rem(184);
+  background: url('../image/pointer.png') no-repeat center ;
+  background-size:  100% 100%;
+  span{
+    position: relative;
+    color:#813a11;
+    font-size: rem(24);
+    top:rem(32);
+  }
+}
+
+.item{
+  position: absolute;
+  width: rem(117);
+  img{
+    width: rem(87);
+    height: rem(87);
+    margin: 0 auto;
+  }
+  span{
+    display: block;
+    font-size: rem(22);
+    width: rem(117);
+    @include ellipsis;
+    color:#c5712e;
+  }
+}
+.rollItem_0{
+  top:rem(32);
+  left: rem(205);
+}
+.rollItem_1{
+  top:rem(117);
+  left: rem(354);
+  transform: rotate(60deg);
+}
+.rollItem_2{
+  top:rem(290);
+  left: rem(354);
+  transform: rotate(120deg);
+}
+.rollItem_3{
+  top:rem(377);
+  left: rem(205);
+  transform: rotate(180deg);
+}
+.rollItem_4{
+  top:rem(291);
+  left: rem(55);
+  transform: rotate(240deg);
+}
+.rollItem_5{
+  top:rem(117);
+  left: rem(55);
+  transform: rotate(300deg);
+}
