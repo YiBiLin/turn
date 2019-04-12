@@ -2,8 +2,8 @@
   <div id="app">
     <lottery :blockNum="blockNum"
              :chance="lotteryChance" :list="turn"
-             :begin="gameBegin"
-             @callb="cb">
+             :prizeIdx="prize"  :easeType="easeType"
+             @callb="cb" @begin="gameBegin">
       <!--奖励列表动态配置时插入的列表-->
       <template slot="table" class="table-list">
 
@@ -45,7 +45,10 @@
           //   "prize_key": "10hebi"
           // }
         ],
-        blockNum:2,
+        blockNum:6,
+        prize:-1,
+        //easeOut,easeInOut,easeOutExpo,easeOutSin
+        easeType:'easeOut'
       }
     },
     methods:{
@@ -53,14 +56,15 @@
       async gameBegin(){
         //获取结果在奖品列表中的下标 index+1
         //   result=0 是代表设备限制等错误请求
-        let result=Math.floor(Math.random()*this.blockNum)+1;
-        return result;
+        this.prize=Math.floor(Math.random()*this.blockNum)+1;
+
+
       },
 
       //点击按钮前对开始条件进行判断
       proxy(e){
-        if(this.lotteryChance==1){
-          console.log('...');
+        if(this.lotteryChance<=0){
+          //利用阻止事件冒泡的方式 进行点击行为过滤
           e.stopPropagation();
           return;
         }

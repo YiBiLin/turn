@@ -1,6 +1,7 @@
 <template>
   <div class="wheel">
 
+
       <div class="rotate" ref="rotate">
         <slot name="table">
           <div :class="'item rollItem_'+index" v-for="(item,index) in list">
@@ -43,9 +44,16 @@
         type:Array,
         default:[]
       },
-      begin:{
-        type:Function
+
+      //最终需要结果
+      prizeIdx:{
+        type:Number,
+        require:true
       },
+      easeType:{
+        type:String,
+        default:'easeOut'
+      }
     },
     data(){
       return{
@@ -60,8 +68,6 @@
         //当前旋转角度
         angleNow:0,
 
-        //最终需要结果
-        result:-1,
 
         //是否正在抽奖
         isRolling:false,
@@ -73,35 +79,46 @@
       }
     },
     computed:{
+      //每个方格所占角度
       perAngle(){
         return 360/this.blockNum;
+      },
+
+
+      result(){
+        console.log(this.prizeIdx)
+        return this.prizeIdx;
       }
     },
     methods:{
 
       //转盘参数设置
       async init(){
+
         let rotate=this.$refs.rotate;
         rotate.style.transform="rotateZ(0deg)";
         this.isRolling=true;
-        this.result=await this.begin();
-        if(this.result===0){
-          console.log('falseww')
-          clearInterval(this.vtimer);
+        await this.$emit('begin');
+        clearInterval(this.vtimer);
 
+        if(this.result<=0){
+          console.log('false')
           this.reset();
           this.$emit('callb',this.result)
           return;
         }
-        console.log('roll',this.result)
+        else{
+          this.roll();
+        }
 
+        console.log('roll',this.result)
 
         this.distance=Math.floor(Math.random()*3+1);
 
         //目标角度
         this.angles=this.distance*360+(this.result-1)*this.perAngle+this.randomAngle();
 
-
+        console.log(this.angles)
       },
 
 
@@ -139,7 +156,7 @@
         },16)
       },
 
-      //中心点附近角度 正负1/3
+      //中心点附近角度 2/3
       randomAngle(){
         return Math.floor(Math.random()*this.perAngle*2/3)-this.perAngle/3;
       },
@@ -155,15 +172,30 @@
             self.reset();
           }else{
             self.t+=16;
-            self.angleNow=self.ease(2000,self.angles,self.t);
+            self.angleNow=self.ease(2000,self.angles,self.t,0,this.easeType);
             rotate.style.transform=`rotateZ(-${self.angleNow}deg)`;
           }
         },16);
       },
 
       //计算位置函数
-      ease(duration,distance,time){
-        return distance * ((time = time / duration - 1) * time * time + 1) ;
+      ease(duration,distance,time,b,type){
+        switch (type) {
+          case 'easeOut':
+            return distance * ((time = time / duration - 1) * time * time + 1)+b ;
+          case 'easeInOut':
+            if ((time /= duration / 2) < 1)
+              return distance / 2 * time * time * time +b ;
+            else
+              return distance / 2 * ((time -= 2) * time * time + 2)+b;
+          case 'easeOutExpo':
+            return (time == duration) ? b + distance : distance * (-Math.pow(2, -10 * time / duration) + 1) + b;
+          case 'easeOutSin':
+            return distance * Math.sin(time / duration * (Math.PI / 2)) + b;
+          default:
+            //easeOut
+            return distance * ((time = time / duration - 1) * time * time + 1)+b ;
+        }
       },
 
       //重置参数
@@ -173,19 +205,23 @@
         self.angleNow=0;
         self.t=0;
         self.angles=0;
-        self.result=-1;
       },
 
 
 
     },
     watch:{
+      //commputed可实现 忽略此方法
+
+
+      /*
       result(newval,oldval){
         if(newval>0){
           clearInterval(this.vtimer);
           this.roll();
         }
       }
+      */
     }
   }
 </script>
