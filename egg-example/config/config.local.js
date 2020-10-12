@@ -40,7 +40,7 @@ module.exports = (appInfo) => {
 
   // 本地请求跨域
   config.cors = {
-    origin: `http://${localhost}:8081`,
+    origin: `*`,
     credentials: true,
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS'
   };

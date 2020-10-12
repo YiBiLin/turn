@@ -12,6 +12,17 @@ class HomeController extends Controller {
       ctx.body = 'hi, egg';
     }
   }
+  
+  async addUser() {
+    const { ctx, service } = this;
+    const { name, email} = ctx.request.body;
+    // 
+    //  参数判断
+    //  ...
+    //  
+    const res = await service.user.home.addUser(name,email);
+    ctx.body = res;
+  }
 }
 
 module.exports = HomeController;
